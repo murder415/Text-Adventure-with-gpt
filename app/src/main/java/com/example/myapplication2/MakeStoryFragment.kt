@@ -25,6 +25,13 @@ import org.json.JSONObject
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 
+import android.text.Editable
+import android.text.TextWatcher
+
+import androidx.navigation.fragment.findNavController
+
+
+
 
 data class ImageResponse(val data: List<ImageData>?) // 'data' 타입을 nullable로 변경합니다.data class ImageData(val url: String)
 data class ImageData(val url: String)
@@ -33,7 +40,12 @@ data class StoryChoice(val text: String)
 
 
 
+
 class MakeStoryFragment : Fragment() {
+
+    companion object {
+        private const val TAG = "MakeStoryFragment"
+    }
 
     private val client = OkHttpClient()
 
@@ -46,8 +58,6 @@ class MakeStoryFragment : Fragment() {
     private val oPENAI_API_KEY = MainActivity.apiKey
 
     private val tAG = "MakeStoryFragment"
-
-
 
 
     private lateinit var binding: MakeStoryFragmentBinding
@@ -74,10 +84,39 @@ class MakeStoryFragment : Fragment() {
         sendButton.setOnClickListener {
             val topic = topicEditText.text.toString()
             fetchStory(topic)
-            binding.button1.visibility = View.VISIBLE
-            binding.button2.visibility = View.VISIBLE
+
 
         }
+
+        binding.button1.setOnClickListener {
+            val topic = topicEditText.text.toString()
+            fetchStory(topic)
+        }
+
+        binding.button2.setOnClickListener {
+            findNavController().navigate(R.id.action_makeStoryFragment_to_storyFragment)
+        }
+
+        topicEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // 이전 텍스트 변경 이벤트 처리
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // 텍스트 변경 이벤트 처리
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // 텍스트 변경 후 이벤트 처리
+                if (s?.isNotBlank() == true) {
+                    // topic이 입력되어 있는 경우에는 sendButton 표시
+                    sendButton.visibility = View.VISIBLE
+                } else {
+                    // topic이 입력되지 않은 경우에는 sendButton 숨김 처리
+                    sendButton.visibility = View.GONE
+                }
+            }
+        })
     }
 
     private fun fetchStory(topic: String) {
@@ -107,6 +146,7 @@ class MakeStoryFragment : Fragment() {
                         .build()
 
                     val response = client.newCall(imageRequest).execute()
+                    println(response)
 
                     if (response.isSuccessful && response.body != null) {
                         val responseString = response.body!!.string()
@@ -138,50 +178,59 @@ class MakeStoryFragment : Fragment() {
 
         }
 
-
-        val storyRequest = Request.Builder()
-            .url("https://api.openai.com/v1/engines/text-davinci-002/completions")
-            .post(
-                "{\"prompt\": \"$topic 에 대한 텍스트 어드벤처 게임의 핵심 스토리 라인을 10줄 이내로 작성해줘 \",\n\"temperature\": 0.7,\n\"max_tokens\": 60,\n\"n\": 1,\n\"stop\": \"\\n\\n\"}"
-                    .toRequestBody("application/json".toMediaType())
-            )
-            .addHeader("Authorization", "Bearer $oPENAI_API_KEY")
-            .build()
-
-
-
-        client.newCall(storyRequest).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Handle failure
-                Log.e(tAG, "Failed to generate story", e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-
-                try {
-                    val storyResponse = storyResponseAdapter.fromJson(responseBody!!)
-                    if (storyResponse?.choices.isNullOrEmpty()) {
-                        throw JsonDataException("Unable to parse story response")
+        lifecycleScope.launch {
+            try {
+                val responseText = withContext(Dispatchers.IO) {
+                    val jsonString = """
+                    {
+                        "prompt": "$topic 에 대한 텍스트 어드벤처 게임의 핵심 스토리 라인을 10줄 이내로 작성해줘",
+                        "temperature": 0.7,
+                        "max_tokens": 60,
+                        "n": 1,
+                        "stop": ["\\n\\n"]
                     }
+                """.trimIndent()
 
-                    val storyText =
-                        storyResponse?.choices?.get(0)?.text // Use '?.' operators instead of '!!.'
+                    val mediaType = "application/json".toMediaTypeOrNull()
+                    val body = jsonString.toRequestBody(mediaType)
+                    val storyRequest = Request.Builder()
+                        .url("https://api.openai.com/v1/engines/text-davinci-002/completions")
+                        .post(body)
+                        .addHeader("Authorization", "Bearer $oPENAI_API_KEY")
+                        .build()
 
-                    activity?.runOnUiThread {
-                        binding.summaryText.text = storyText
+                    val response = client.newCall(storyRequest).execute()
 
+                    if (response.isSuccessful && response.body != null) {
+                        val responseString = response.body!!.string()
+                        return@withContext JSONUtil.getTextFromJson(responseString)
+                    } else {
+                        throw IOException("Failed to get response from API: ${response.code}")
                     }
-                } catch (e: Exception) {
-                    Log.e(tAG, "Failed to parse story response", e)
                 }
+
+                if (!responseText.isNullOrEmpty()) {
+                    binding.summaryText.visibility = View.VISIBLE
+                    binding.summaryText.text = responseText
+                    Log.d(TAG, "텍스트 생성 성공: $responseText") // 로그로 출력
+
+                    binding.button1.visibility = View.VISIBLE
+                    binding.button2.visibility = View.VISIBLE
+
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "인터넷 연결을 다시 확인해주세요. ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "텍스트를 생성할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
-
-
-        })
-
+        }
     }
-
 
     object JSONUtil {
         fun getUrlFromJson(jsonString: String): String? {
@@ -195,6 +244,25 @@ class MakeStoryFragment : Fragment() {
                 null
             }
         }
+
+        fun getTextFromJson(jsonString: String): String? {
+            return try {
+                val jsonObject = JSONObject(jsonString)
+                val choicesArray = jsonObject.getJSONArray("choices")
+                val choiceObject = choicesArray.getJSONObject(0)
+                choiceObject.getString("text")
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                null
+            }
+        }
     }
 }
+
+
+
+
+
+
+
 

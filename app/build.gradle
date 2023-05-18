@@ -24,7 +24,7 @@ android {
 
     sourceSets {
         main {
-            python.srcDir "src/main/python"
+            python.srcDir "src/main/java/com/example/python"
         }
     }
 
@@ -59,14 +59,21 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            abiFilters "armeabi-v7a", "x86_64"
         }
 
         python {
             version "3.8"
-            buildPython "Local\\Programs\\Python\\Python38\\python.exe"
+            buildPython "C:/Users/murde/AppData/Local/Programs/Python/Python38/python.exe"
             pip{
-
+//                install "transformers"
+//                install "datasets"
+//                install "tqdm"
+//                install "konlpy"
+//                install "googletrans==4.0.0-rc1"
+//                install "diffusers"
+//                install "torch"
+//                install "openai"
             }
         }
     }
@@ -93,8 +100,9 @@ android {
 }
 
 dependencies {
+    //implementation 'com.eclipsesource.j2v8:j2v8:8.1.0-android'
 
-    implementation 'com.chaquo.python:chaquopy:14.0.2'
+    //implementation 'com.chaquo.python:pytorch_android_arm64-v8a:1.7.1'
 
 
     annotationProcessor "com.github.bumptech.glide:compiler:4.12.0"

@@ -30,7 +30,7 @@ import java.io.LineNumberReader
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val apiKey = "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"
+        const val apiKey = "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"
     }
 
 
