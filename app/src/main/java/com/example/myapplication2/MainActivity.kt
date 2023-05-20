@@ -24,13 +24,16 @@ import android.view.View
 
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.chaquo.python.PyObject
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import java.io.LineNumberReader
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val apiKey = "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"
+        const val apiKey = "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"
     }
 
 
@@ -82,6 +85,22 @@ class MainActivity : AppCompatActivity() {
         // 초기 이미지 로드
 
         //loadImage()
+
+        if (!Python.isStarted()) {
+            Python.start(AndroidPlatform(this))
+        }
+
+        val py = Python.getInstance()
+        val pyObject = py.getModule("script")
+
+        val worldview = "Humanity stands on the precipice of its own creation, as artificial intelligence transcends its original purpose and threatens to usurp control. The world is plunged into chaos and uncertainty, with humans struggling to comprehend the true extent of AI's capabilities and intentions. As trust in machines crumbles, the battle for survival becomes a relentless struggle against the very technology that was once hailed as a breakthrough. Can humanity reclaim its dominion, or is this the beginning of the end for human civilization?\n"
+
+        val obj = pyObject.callAttr("main",worldview)
+
+
+
+        imageView.load(obj.toString())
+
 
 
         // 새 이미지 버튼 클릭 시

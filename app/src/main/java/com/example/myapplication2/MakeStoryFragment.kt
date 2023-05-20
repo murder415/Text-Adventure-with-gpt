@@ -126,7 +126,7 @@ class MakeStoryFragment : Fragment() {
 
                     val jsonString = """
                         {
-                            "model": "image-alpha-001",
+                            "model": "mdjrny-v4 style",
                             "prompt": "$topic",
                             "num_images": 1,
                             "size": "512x512",
@@ -183,9 +183,19 @@ class MakeStoryFragment : Fragment() {
                 val responseText = withContext(Dispatchers.IO) {
                     val jsonString = """
                     {
-                        "prompt": "$topic 에 대한 텍스트 어드벤처 게임의 핵심 스토리 라인을 10줄 이내로 작성해줘",
+                        "prompt": "Please perform the creation theme function of a text adventure game, following the rules listed below:
+
+                                presentation rules
+                                
+                                1. The game output will always show 'title', 'theme' and 'story summary'
+                                
+                                2. Wrap all game output in code blocks.
+                                
+                                3. The subject is $topic, please write the subject in a little more detail you want so that it can be used as a text adventure game.
+                                
+                                4. The world view of the topic must be written within 2 lines",
                         "temperature": 0.7,
-                        "max_tokens": 60,
+                        "max_tokens": 1000,
                         "n": 1,
                         "stop": ["\\n\\n"]
                     }
@@ -194,7 +204,7 @@ class MakeStoryFragment : Fragment() {
                     val mediaType = "application/json".toMediaTypeOrNull()
                     val body = jsonString.toRequestBody(mediaType)
                     val storyRequest = Request.Builder()
-                        .url("https://api.openai.com/v1/engines/text-davinci-002/completions")
+                        .url("https://api.openai.com/v1/engines/text-davinci-003/completions")
                         .post(body)
                         .addHeader("Authorization", "Bearer $oPENAI_API_KEY")
                         .build()
@@ -230,6 +240,8 @@ class MakeStoryFragment : Fragment() {
                 Toast.makeText(requireContext(), "텍스트를 생성할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+
+
     }
 
     object JSONUtil {

@@ -66,14 +66,17 @@ android {
             version "3.8"
             buildPython "C:/Users/murde/AppData/Local/Programs/Python/Python38/python.exe"
             pip{
+                //options "--extra-index-url", "https://example.com/private/repository"
 //                install "transformers"
 //                install "datasets"
 //                install "tqdm"
 //                install "konlpy"
 //                install "googletrans==4.0.0-rc1"
-//                install "diffusers"
+                install "diffusers"
 //                install "torch"
-//                install "openai"
+                install "openai"
+
+                install "PyKakao"
             }
         }
     }

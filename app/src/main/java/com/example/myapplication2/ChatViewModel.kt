@@ -1,43 +1,30 @@
-/* package com.example.myapplication2
-
-import androidx.lifecycle.LiveData
+package com.example.myapplication2
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.myapplication2.ChatGPTService
 import com.example.myapplication2.MessageRequest
 import com.example.myapplication2.MessageResponse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Exception
-
 
 class ChatViewModel : ViewModel() {
-    private val service = Retrofit.Builder()
-        .baseUrl("https://api.openai.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(ChatGPTService::class.java)
 
-    private val _messages = MutableLiveData<List<String>>()
-    val messages: LiveData<List<String>> = _messages
+    val messageResponse: MutableLiveData<MessageResponse> = MutableLiveData()
+    val errorMessage: MutableLiveData<String> = MutableLiveData()
 
-    fun sendMessage(text: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.getMessage(MessageRequest(text, 1, 50))
-                val result = response.choices[0].text
-                val lines = result.split("\n")
-                _messages.value = lines
-            } catch (e: Exception) {
-                _messages.value = listOf("Error: ${e.message}")
-            }
-        }
+    private var apiKey: String = ""
+
+    fun setApiKey(apiKey: String) {
+        this.apiKey = apiKey
+    }
+
+    fun sendMessage(request: MessageRequest) {
+        // TODO: Implement sending the message and handling the response
+
+        // 예시로 고정된 응답을 보내는 코드
+        val response = MessageResponse(
+            listOf(
+                Choice("Hello!", 0, Logprobs(listOf("Hello!"), listOf(0.0), listOf(0.0)), "complete")
+            ),
+            1.5
+        )
+        messageResponse.value = response
     }
 }
-
-
- */

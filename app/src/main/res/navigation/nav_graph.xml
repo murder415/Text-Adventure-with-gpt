@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/makeStoryFragment">
+
+    <fragment
+        android:id="@+id/makeStoryFragment"
+        android:name="com.example.myapplication2.MakeStoryFragment"
+        android:label="Make Story"
+        tools:layout="@layout/make_story_fragment">
+
+        <action
+            android:id="@+id/action_makeStoryFragment_to_storyFragment"
+            app:destination="@id/storyFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/storyFragment"
+        android:name="com.example.myapplication2.StoryFragment"
+        android:label="Story"
+        tools:layout="@layout/story_fragment" />
 
 </navigation>

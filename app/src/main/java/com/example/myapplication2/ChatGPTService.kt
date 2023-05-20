@@ -1,4 +1,4 @@
-/* package com.example.myapplication2
+package com.example.myapplication2
 
 
 import retrofit2.http.Body
@@ -12,4 +12,3 @@ interface ChatGPTService {
     suspend fun getMessage(@Body request: MessageRequest): MessageResponse
 }
 
- */
