@@ -1,68 +1,253 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/story_bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/story_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp" />
 
-    </ScrollView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/story_bottom_navigation"
-        android:layout_width="0dp"
+    <!-- Turn Number, Time Period, Day Number, Weather
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:padding="16dp">
 
-        <ImageButton
-            android:id="@+id/story_inventory_button"
+         Turn Number
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp">
+
+            <ImageView
+                android:id="@+id/turnIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:contentDescription="Turn Icon"
+                android:src="@drawable/turn_icon" />
+
+            <TextView
+                android:id="@+id/turnNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/turnIconImageView"
+                android:text="Turn: 0" />
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
             android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@null"
-            android:padding="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/inventory"
-            android:scaleType="centerCrop"/>
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp">
 
-        <ImageButton
-            android:id="@+id/story_chat_button"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@null"
-            android:padding="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/talk"
-            android:scaleType="centerCrop"/>
+            <ImageView
+                android:id="@+id/timeIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:contentDescription="Time Icon"
+                android:src="@drawable/time_icon" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/timePeriodTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/timeIconImageView"
+                android:text="Time Period" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/story_view_pager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/story_bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/dayIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/day_icon"
+                android:contentDescription="Day Icon" />
+
+            <TextView
+                android:id="@+id/dayNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/dayIconImageView"
+                android:layout_centerVertical="true"
+                android:text="Day: 0" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/weatherIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/weather_icon"
+                android:contentDescription="Weather Icon" />
+
+            <TextView
+                android:id="@+id/weatherTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/weatherIconImageView"
+                android:layout_centerVertical="true"
+                android:text="Weather" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/statsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="16dp">
+
+
+
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="70dp">
+
+            <ImageView
+                android:id="@+id/levelIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:contentDescription="Level Icon"
+                android:src="@drawable/level_icon" />
+
+            <TextView
+                android:id="@+id/levelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/levelIconImageView"
+                android:text="Level: 0" />
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/xpProgressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            android:progress="30"
+            android:progressTint="#00FF00" />
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="70dp">
+
+            <ImageView
+                android:id="@+id/healthIconImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/heart_icon"
+                android:contentDescription="Heart Icon" />
+
+            <TextView
+                android:id="@+id/healthTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/healthIconImageView"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:text="20/20" />
+
+        </RelativeLayout>
+    </LinearLayout>
+-->
+    <!-- Condition Button -->
+    <ImageButton
+        android:id="@+id/conditionButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/condition_icon"
+        android:background="@android:color/transparent"
+        android:contentDescription="Condition" />
+
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/descriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/conditionButton"
+        android:padding="16dp"
+        android:text="" />
+
+    <!-- Story Text -->
+    <TextView
+        android:id="@+id/storyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descriptionTextView"
+        android:padding="16dp"
+        android:text="" />
+
+    <!-- Inventory Button -->
+    <ImageButton
+        android:id="@+id/inventoryButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/inventory"
+        android:background="@android:color/transparent"
+        android:contentDescription="Inventory" />
+
+    <!-- Talk Button -->
+    <ImageButton
+        android:id="@+id/talkButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/talk"
+        android:background="@android:color/transparent"
+        android:contentDescription="Talk" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/inventoryButton"
+        android:visibility="gone" />
+
+</RelativeLayout>

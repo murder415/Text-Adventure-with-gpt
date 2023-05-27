@@ -2,6 +2,7 @@ package com.example.myapplication2
 
 import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Im
+import android.service.voice.VoiceInteractionSession.VisibleActivityCallback
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,16 +25,32 @@ import android.view.View
 
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import java.io.LineNumberReader
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import kotlinx.coroutines.Job
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var navController: NavController
+
+
     companion object {
-        const val apiKey = "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"
+        const val apiKey = "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"
     }
 
 
@@ -41,6 +58,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var newImageButton: Button
     private lateinit var startOverButton: Button
     private lateinit var titleTextView: TextView
+    private lateinit var ProgressBar: ProgressBar
+    private lateinit var FrameLayout: FrameLayout
+
+
+
 
     private val url = "https://api.openai.com/v1/images/generations"
     private val prompt = "#zombie #apocalypse #survival #news #emergency #preparation #danger #panic #escape #weapon #self-defense #teamwork #communication #resources #shelter #food #water #first-aid #risk-assessment #adaptation"
@@ -50,8 +72,13 @@ class MainActivity : AppCompatActivity() {
 
     private var isStoryGenerated = false
 
+    var pythonJob: Job? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
 
 
         super.onCreate(savedInstanceState)
@@ -60,25 +87,206 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.main_activity)
 
 
-
+            ProgressBar = findViewById(R.id.loadingProgressBar)
             imageView = findViewById(R.id.imageView)
             newImageButton = findViewById(R.id.newImageButton)
             startOverButton = findViewById(R.id.startButton)
             titleTextView = findViewById(R.id.titleTextView)
+            FrameLayout = findViewById(R.id.first_fragment_container)
+
+            pythonJob = lifecycleScope.launch {
+
+                if (!Python.isStarted()) {
+                    Python.start(AndroidPlatform(this@MainActivity))
+                }
+
+                val py = Python.getInstance()
+                val pyObject = py.getModule("script")
+
+                val worldview =
+                    "Humanity stands on the precipice of its own creation, as artificial intelligence transcends its original purpose and threatens to usurp control. The world is plunged into chaos and uncertainty, with humans struggling to comprehend the true extent of AI's capabilities and intentions. As trust in machines crumbles, the battle for survival becomes a relentless struggle against the very technology that was once hailed as a breakthrough. Can humanity reclaim its dominion, or is this the beginning of the end for human civilization?\n"
+
+                val obj = withContext(Dispatchers.IO) {
+
+                    """
+                    val returnValue = pyObject.callAttr("main", worldview)
+                    
+                    val objString = returnValue.toString()
+                    val objBytes = objString.toByteArray()
+
+
+                    println(returnValue)
+                    println(returnValue::class.java)
+                    println("/////////////////////////////////////////////////////////")
+
+                    println(objString)
+                    println(objString::class.java)
+                    println("/////////////////////////////////////////////////////////")
+
+                    println(objBytes)
+                    println(objBytes::class.java)
+
+                    val imageBytes = Base64.decode(objString, Base64.DEFAULT)
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+
+                    bitmap"""
+
+                    val py = Python.getInstance()
+                    val pyObject = py.getModule("script")
+                    pyObject.callAttr("main", worldview)
+
+                }
+
+                // UI 업데이트는 메인 스레드에서 처리
+                withContext(Dispatchers.Main) {
+                    println("----------------------------------------------------------------")
+                    println(obj.toString())
+
+                    imageView.load(obj.toString())
+
+                    ProgressBar.visibility = View.GONE
+
+                }
+
+            }
+
 
             newImageButton.setOnClickListener {
-                loadImage()
+
+                pythonJob?.cancel()
+
+                imageView.visibility = View.GONE
+                titleTextView.visibility = View.GONE
+                startOverButton.visibility = View.GONE
+                newImageButton.visibility = View.GONE
+
+
+                FrameLayout.visibility = View.VISIBLE
+
+
+                val navHostFragment =
+                    supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.findNavController()
+                navController.navigate(R.id.makeStoryFragment)
+            }
+
+
+            startOverButton.setOnClickListener {
+
+                pythonJob?.cancel()
+
+                imageView.visibility = View.GONE
+                titleTextView.visibility = View.GONE
+                startOverButton.visibility = View.GONE
+                newImageButton.visibility = View.GONE
+
+                FrameLayout.visibility = View.VISIBLE
+
+                val navHostFragment =
+                    supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.findNavController()
+                navController.navigate(R.id.storyFragment)
             }
 
         } else {
             // 이야기 생성이 되어있는 경우, MainActivity1을 보여줍니다.
             setContentView(R.layout.first_loby)
 
+
+            imageView = findViewById(R.id.imageView)
+
+
             startOverButton = findViewById(R.id.startButton)
             titleTextView = findViewById(R.id.titleTextView)
+            ProgressBar = findViewById(R.id.loadingProgressBar)
+            FrameLayout = findViewById(R.id.first_fragment_container)
+
+            pythonJob = lifecycleScope.launch {
+
+                if (!Python.isStarted()) {
+                    Python.start(AndroidPlatform(this@MainActivity))
+                }
+
+                val py = Python.getInstance()
+                val pyObject = py.getModule("script")
+
+                val worldview =
+                    "Humanity stands on the precipice of its own creation, as artificial intelligence transcends its original purpose and threatens to usurp control. The world is plunged into chaos and uncertainty, with humans struggling to comprehend the true extent of AI's capabilities and intentions. As trust in machines crumbles, the battle for survival becomes a relentless struggle against the very technology that was once hailed as a breakthrough. Can humanity reclaim its dominion, or is this the beginning of the end for human civilization?\n"
+
+                val obj = withContext(Dispatchers.IO) {
+                    """
+                    val returnValue = pyObject.callAttr("main", worldview)
+                    
+                    val objString = returnValue.toString()
+                    val objBytes = objString.toByteArray()
+
+
+                    println(returnValue)
+                    println(returnValue::class.java)
+                    println("/////////////////////////////////////////////////////////")
+
+                    println(objString)
+                    println(objString::class.java)
+                    println("/////////////////////////////////////////////////////////")
+
+                    println(objBytes)
+                    println(objBytes::class.java)
+
+                    val imageBytes = Base64.decode(objString, Base64.DEFAULT)
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+
+                    bitmap"""
+
+                    val py = Python.getInstance()
+                    val pyObject = py.getModule("script")
+                    pyObject.callAttr("main", worldview)
+
+
+                }
+
+                // UI 업데이트는 메인 스레드에서 처리
+                withContext(Dispatchers.Main) {
+                    println("----------------------------------------------------------------")
+                    println(obj.toString())
+
+                    //imageView.setImageBitmap(obj)
+                    imageView.load(obj.toString())
+
+                    imageView.visibility = View.VISIBLE
+                    ProgressBar.visibility = View.GONE
+
+
+
+                }
+
+            }
+
+
+
+            startOverButton.setOnClickListener {
+
+
+                pythonJob?.cancel()
+
+                imageView.visibility = View.GONE
+                titleTextView.visibility = View.GONE
+                startOverButton.visibility = View.GONE
+                ProgressBar.visibility = View.GONE
+
+                FrameLayout.visibility = View.VISIBLE
+
+
+                val navHostFragment =
+                    supportFragmentManager.findFragmentById(R.id.nav_host_fragment_lobby) as NavHostFragment
+                val navController = navHostFragment.findNavController()
+                navController.navigate(R.id.makeStoryFragment)
+            }
         }
 
-        imageView = findViewById(R.id.imageView)
+
+
 
 
 
@@ -86,33 +294,21 @@ class MainActivity : AppCompatActivity() {
 
         //loadImage()
 
-        if (!Python.isStarted()) {
-            Python.start(AndroidPlatform(this))
-        }
-
-        val py = Python.getInstance()
-        val pyObject = py.getModule("script")
-
-        val worldview = "Humanity stands on the precipice of its own creation, as artificial intelligence transcends its original purpose and threatens to usurp control. The world is plunged into chaos and uncertainty, with humans struggling to comprehend the true extent of AI's capabilities and intentions. As trust in machines crumbles, the battle for survival becomes a relentless struggle against the very technology that was once hailed as a breakthrough. Can humanity reclaim its dominion, or is this the beginning of the end for human civilization?\n"
-
-        val obj = pyObject.callAttr("main",worldview)
-
-
-
-        imageView.load(obj.toString())
-
-
 
         // 새 이미지 버튼 클릭 시
 
 
         // 시작하기 버튼 클릭 시
-        startOverButton.setOnClickListener {
+        /*startOverButton.setOnClickListener {
             // 여기에 시작하기 버튼 클릭 시의 동작 구현
 
-            findViewById<ImageView>(R.id.imageView).visibility = View.GONE
-            findViewById<TextView>(R.id.titleTextView).visibility = View.GONE
-            findViewById<Button>(R.id.startButton).visibility = View.GONE
+            imageView.visibility = View.GONE
+            titleTextView.visibility = View.GONE
+            startOverButton.visibility = View.GONE
+            ProgressBar.visibility = View.GONE
+
+
+
 
 
 
@@ -129,7 +325,7 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-        }
+        }*/
 
 
 

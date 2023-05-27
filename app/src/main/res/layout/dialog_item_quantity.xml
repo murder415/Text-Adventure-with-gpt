@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="아이템 개수 선택"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp">
+
+        <ImageButton
+            android:id="@+id/buttonDecrease"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_up"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:id="@+id/buttonIncrease"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_down"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editQuantity"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:text="1"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:editable="false"
+        android:background="@null" />
+
+</LinearLayout>

@@ -21,6 +21,30 @@
         android:id="@+id/storyFragment"
         android:name="com.example.myapplication2.StoryFragment"
         android:label="Story"
-        tools:layout="@layout/story_fragment" />
+        tools:layout="@layout/story_fragment" >
+
+        <action
+            android:id="@+id/action_storyFragment_to_chatBotFragment"
+            app:destination="@id/chatBotFragment" />
+
+        <action
+            android:id="@+id/action_storyFragment_to_inventoryFragment"
+            app:destination="@id/inventoryFragment" />
+
+    </fragment>
+
+    <fragment
+    android:id="@+id/chatBotFragment"
+    android:name="com.example.myapplication2.ChatBotFragment"
+    android:label="Chat Bot"
+    tools:layout="@layout/fragment_chat" />
+
+    <fragment
+    android:id="@+id/inventoryFragment"
+    android:name="com.example.myapplication2.InventoryFragment"
+    android:label="Inventory"
+    tools:layout="@layout/fragment_inventory" />
+
+
 
 </navigation>

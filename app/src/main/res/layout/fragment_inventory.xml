@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- 아이템 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아이템 1"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/button_use_item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사용" />
+
+        <Button
+            android:id="@+id/button_discard_item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="버리기" />
+
+    </LinearLayout>
+
+    <!-- 아이템 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아이템 2"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/button_use_item2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사용" />
+
+        <Button
+            android:id="@+id/button_discard_item2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="버리기" />
+
+    </LinearLayout>
+
+    <!-- 추가적인 아이템들을 진열할 수 있습니다 -->
+
+</LinearLayout>
