@@ -25,6 +25,8 @@ import android.os.Looper
 import android.text.SpannableStringBuilder
 
 import android.view.MotionEvent
+import android.widget.ArrayAdapter
+
 
 
 
@@ -34,10 +36,12 @@ import kotlin.reflect.jvm.internal.impl.types.AbstractTypeCheckerContext.Superty
 
 import android.app.Dialog
 import android.view.Window
-
+import android.widget.Button
+import android.widget.ListView
 
 
 class StoryFragment : Fragment() {
+
 
     private lateinit var turnNumberTextView: TextView
     private lateinit var timePeriodTextView: TextView
@@ -103,7 +107,7 @@ class StoryFragment : Fragment() {
 
         // Inventory 아이콘 클릭 시 InventoryFragment로 이동
         inventoryButton.setOnClickListener {
-            findNavController().navigate(R.id.action_storyFragment_to_inventoryFragment)
+            showInventoryDialog()
         }
 
         // Talk 아이콘 클릭 시 ChatbotFragment로 이동
@@ -118,6 +122,40 @@ class StoryFragment : Fragment() {
         return view
     }
 
+    private fun showInventoryDialog(){
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.fragment_inventory)
+
+        val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
+        val inventoryLeftListView = dialog.findViewById<ListView>(R.id.inventoryLeftListView)
+        val inventoryRightListView = dialog.findViewById<ListView>(R.id.inventoryRightListView)
+        val useButton = dialog.findViewById<Button>(R.id.useButton)
+        val discardButton = dialog.findViewById<Button>(R.id.discardButton)
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val leftItems = mutableListOf<String>()
+        val rightItems = mutableListOf<String>()
+
+        inventory.forEachIndexed { index, item ->
+            if ((index + 1) % 2 == 0) {
+                rightItems.add(item)
+            } else {
+                leftItems.add(item)
+            }
+        }
+
+        val leftAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, leftItems)
+        val rightAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, rightItems)
+
+        inventoryLeftListView.adapter = leftAdapter
+        inventoryRightListView.adapter = rightAdapter
+
+        dialog.show()
+    }
     private fun showConditionDialog() {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE) // 다이얼로그 제목 제거
@@ -416,6 +454,15 @@ class StoryFragment : Fragment() {
         }
 
         startTyping()
+    }
+
+
+    fun receiveInventoryArray(inventory: Array<String>) {
+        // 전달된 배열을 사용하여 작업을 수행합니다.
+        // 예시로 배열 요소를 출력하는 코드를 작성하였습니다.
+        inventory.forEach { item ->
+            println(item)
+        }
     }
 
 

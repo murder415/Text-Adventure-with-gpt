@@ -1,63 +1,109 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- 아이템 1 -->
-    <LinearLayout
+
+    <!-- Title -->
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="아이템 1"
-            android:textSize="18sp" />
+            android:layout_centerInParent="true"
+            android:text="Inventory"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="16dp" />
 
-        <Button
-            android:id="@+id/button_use_item1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="사용" />
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Close"
+            android:src="@drawable/ic_close" />
 
-        <Button
-            android:id="@+id/button_discard_item1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="버리기" />
+    </RelativeLayout>
+
+
+    <!-- Inventory List -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- Left Side -->
+        <ListView
+            android:id="@+id/inventoryLeftListView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <!-- Right Side -->
+        <ListView
+            android:id="@+id/inventoryRightListView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
-    <!-- 아이템 2 -->
+    <!-- Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="아이템 2"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/button_use_item2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="사용" />
+        <!-- Use Button -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <Button
-            android:id="@+id/button_discard_item2"
-            android:layout_width="wrap_content"
+            android:id="@+id/useButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="버리기" />
+            android:fontFamily="@font/scdream7"
+            android:text="사용"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/discardButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="취소"
+            android:fontFamily="@font/scdream7"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
-
-    <!-- 추가적인 아이템들을 진열할 수 있습니다 -->
 
 </LinearLayout>
