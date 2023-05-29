@@ -1,43 +1,43 @@
 package com.example.myapplication2
 
+
+import android.app.Dialog
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import android.os.Looper
-
-import android.text.SpannableStringBuilder
-
-import android.view.MotionEvent
-import android.widget.ArrayAdapter
-
-
-
-
-import android.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import kotlin.reflect.jvm.internal.impl.types.AbstractTypeCheckerContext.SupertypesPolicy.None
+import android.util.Log
+import androidx.navigation.fragment.findNavController
 
-import android.app.Dialog
-import android.view.Window
-import android.widget.Button
-import android.widget.ListView
+import android.view.ViewConfiguration
+import android.content.Context
+
+
 
 
 class StoryFragment : Fragment() {
@@ -94,7 +94,25 @@ class StoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view = inflater.inflate(R.layout.story_fragment, container, false)
+
+        val swipeCallback = object : SwipeCallback(requireActivity()) {
+            override fun onSwipeLeft() {
+                // 화면 전환 액션 실행
+                findNavController().navigate(R.id.action_storyFragment_to_genimgFragment)
+                showImgFragment()
+            }
+
+            override fun onSwipeRight() {
+                // 화면 전환 액션 실행
+                findNavController().navigate(R.id.action_storyFragment_to_choiceFragment)
+            }
+        }
+
+        // 스와이프 제스처를 감지할 뷰에 콜백 등록
+        val swipeView = view.findViewById<View>(R.id.swipeGestureView)
+        swipeView.setOnTouchListener(swipeCallback)
 
 
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
@@ -103,6 +121,8 @@ class StoryFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
         conditionButton =  view.findViewById(R.id.conditionButton)
         storyTextView = view.findViewById(R.id.storyTextView)
+
+
 
 
         // Inventory 아이콘 클릭 시 InventoryFragment로 이동
@@ -122,7 +142,11 @@ class StoryFragment : Fragment() {
         return view
     }
 
-    private fun showInventoryDialog(){
+    private fun showImgFragment(){
+
+    }
+    private fun showInventoryDialog() {
+        println("inventory Loop inner")
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.fragment_inventory)
@@ -137,10 +161,14 @@ class StoryFragment : Fragment() {
             dialog.dismiss()
         }
 
+        val inventoryList = inventory.toMutableList() // 불변 리스트를 가변 리스트로 변환
+
         val leftItems = mutableListOf<String>()
         val rightItems = mutableListOf<String>()
 
-        inventory.forEachIndexed { index, item ->
+        println(inventoryList)
+
+        inventoryList.forEachIndexed { index, item ->
             if ((index + 1) % 2 == 0) {
                 rightItems.add(item)
             } else {
@@ -148,18 +176,38 @@ class StoryFragment : Fragment() {
             }
         }
 
+        println(rightItems)
+        println(leftItems)
+
         val leftAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, leftItems)
         val rightAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, rightItems)
 
         inventoryLeftListView.adapter = leftAdapter
         inventoryRightListView.adapter = rightAdapter
 
+        leftAdapter.notifyDataSetChanged()
+        rightAdapter.notifyDataSetChanged()
+
+        leftItems.forEachIndexed { index, item ->
+            Log.d("Inventory", "Left Item ${index + 1}: $item")
+        }
+
+        rightItems.forEachIndexed { index, item ->
+            Log.d("Inventory", "Right Item ${index + 1}: $item")
+        }
+
         dialog.show()
     }
+
+
+
+
     private fun showConditionDialog() {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE) // 다이얼로그 제목 제거
         dialog.setContentView(R.layout.condition) // 커스텀 다이얼로그 레이아웃 설정
+
+
 
         // 커스텀 다이얼로그 내부의 뷰들을 찾아서 초기화
         val difficultyTextView = dialog.findViewById<TextView>(R.id.difficultyTextView)
@@ -172,37 +220,53 @@ class StoryFragment : Fragment() {
         val xpProgressBar = dialog.findViewById<ProgressBar>(R.id.xpProgressBar)
         val healthTextView = dialog.findViewById<TextView>(R.id.healthTextView)
         val weatherTextView = dialog.findViewById<TextView>(R.id.weatherTextView)
+        val weatherTextView2 = dialog.findViewById<TextView>(R.id.weatherTextView2)
+
         val dayNumberTextView = dialog.findViewById<TextView>(R.id.dayNumberTextView)
         val timePeriodTextView = dialog.findViewById<TextView>(R.id.timePeriodTextView)
         val turnNumberTextView = dialog.findViewById<TextView>(R.id.turnNumberTextView)
         val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
 
         // closeButton 클릭 시 다이얼로그 닫기
-        closeButton.setOnClickListener {
-            dialog.dismiss()
-        }
+
 
 
 
         // 다이얼로그에 데이터 설정 및 표시
-        difficultyTextView.text = difficulty
-        persuasionTextView.text = abilities["Persuasion"]
-        strengthTextView.text = abilities["Strength"]
-        intelligenceTextView.text = abilities["Intelligence"]
-        dexterityTextView.text = abilities["Dexterity"]
-        luckTextView.text = abilities["Luck"]
+        difficultyTextView.text = "Difficulty : " + difficulty
+        persuasionTextView.text = "리더십   "+abilities["Persuasion"]
+        strengthTextView.text = "힘   " + abilities["Strength"]
+        intelligenceTextView.text = "지능   " +abilities["Intelligence"]
+        dexterityTextView.text = "손재주   "+abilities["Dexterity"]
+        luckTextView.text = "행운   "+abilities["Luck"]
         levelTextView.text = level
         xpProgressBar.progress = xp.toInt()
         healthTextView.text = health
+        weatherTextView2.text = ""
         weatherTextView.text = weather
         dayNumberTextView.text = currentDay
+        if(timePeriod.length > 10){
+            timePeriodTextView.textSize = 8.0.toFloat()
+        }
         timePeriodTextView.text = timePeriod
+        if( weather.length > 10){
+            if(weather.length > 20 ){
+                weatherTextView2.text = weather
+                weatherTextView.text = ""
+            }
+            weatherTextView.textSize = 7.0.toFloat()
+        }
+
         turnNumberTextView.text = turnNumber
 
         dialog.setCancelable(false) // 다이얼로그가 취소되지 않도록 설정
 
         dialog.show()
 
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
 
 // 다이얼로그 레이아웃의 최상위 뷰에 터치 이벤트 처리기 설정
         val dialogView = dialog.window?.decorView?.findViewById<View>(android.R.id.content)
@@ -264,7 +328,7 @@ class StoryFragment : Fragment() {
             val obj = withContext(Dispatchers.IO) {
                 val py = Python.getInstance()
                 val pyObject = py.getModule("textAdventure")
-                pyObject.callAttr("main", MakeStoryFragment.gameOutput)
+                var messages = pyObject.callAttr("main", MakeStoryFragment.gameOutput)
                 val attributes = pyObject.callAttr("return_attributes").toString()
                 val answer = pyObject.callAttr("return_answer").toString()
                 Pair(attributes, answer)
@@ -287,6 +351,8 @@ class StoryFragment : Fragment() {
         // JSON 문자열을 Map으로 변환
         val data: Map<String, Any> = parseJson(result)
 
+
+
         // 필요한 데이터 추출
         turnNumber = data["Turn number"] as? String ?: ""
         difficulty = data["Difficulty"] as? String ?: ""
@@ -297,14 +363,54 @@ class StoryFragment : Fragment() {
         xp = data["XP"] as? String ?: ""
         ac = data["AC"] as? String ?: ""
         level = data["Level"] as? String ?: ""
+
         location = data["Location"] as? String ?: ""
-        description= data["Description"] as? String ?: ""
         gold = data["Gold"] as? String ?: ""
+
+        description= data["Description"] as? String ?: ""
+
         inventory = data["Inventory"] as? Array<String> ?: emptyArray()
         quest = data["Quest"] as? String ?: ""
         abilities = data["Abilities"] as? Map<String, String> ?: emptyMap()
         commands = data["Possible Commands"] as? Map<String, String> ?: emptyMap()
         val story : String = data["Story"] as? String ?: ""
+
+
+
+        val py = Python.getInstance()
+        val pyObject = py.getModule("translate")
+
+        val obj = pyObject.callAttr("en2ko", timePeriod)
+
+
+        val obj2 = pyObject.callAttr("en2ko", location)
+
+
+        val obj3 = pyObject.callAttr("en2ko", weather)
+
+
+        val translations = mutableListOf<String>()
+        for (item in inventory) {
+            val translation = pyObject.callAttr("en2ko", item).toString()
+
+            translations.add(translation)
+        }
+
+        val translatedInventory = translations.toTypedArray()
+
+
+            // 결과를 가지고 추가 작업 수행
+            // UI 업데이트는 Dispatchers.Main을 사용하여 메인 스레드에서 수행
+
+
+                // UI 업데이트 등을 위해 메인 스레드로 전환하여 실행하는 코드 작성
+        timePeriod = obj.toString()
+        location = obj2.toString()
+        weather = obj3.toString()
+
+        inventory = translatedInventory
+
+
 
         // 추출된 데이터 사용
         // ...
@@ -313,6 +419,12 @@ class StoryFragment : Fragment() {
 
 
         conditionButton.setOnClickListener {
+
+            showConditionDialog()
+
+        }
+
+        inventoryButton.setOnClickListener {
 
             showConditionDialog()
 
@@ -476,3 +588,37 @@ class StoryFragment : Fragment() {
 }
 
 
+abstract class SwipeCallback(private val context: Context) : View.OnTouchListener {
+    private var startX = 0f
+    private var startY = 0f
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+
+    override fun onTouch(view: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                startX = event.x
+                startY = event.y
+            }
+            MotionEvent.ACTION_UP -> {
+                val endX = event.x
+                val endY = event.y
+                val diffX = endX - startX
+                val diffY = endY - startY
+
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > touchSlop) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    abstract fun onSwipeLeft()
+
+    abstract fun onSwipeRight()
+}

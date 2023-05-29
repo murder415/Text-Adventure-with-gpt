@@ -38,6 +38,11 @@ import android.widget.TextView
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.EditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
+import android.graphics.BitmapFactory
+import android.util.Base64
 
 
 data class ImageResponse(val data: List<ImageData>?) // 'data' 타입을 nullable로 변경합니다.data class ImageData(val url: String)
@@ -52,6 +57,12 @@ class MakeStoryFragment : Fragment() {
 
     private var storySummary: String = ""
 
+    var topic: String = ""
+
+
+    private var theme: String = ""
+    private var worldview: String = "0"
+    private var samplestory: String = ""
 
     companion object {
         var gameOutput: String = ""
@@ -112,7 +123,7 @@ class MakeStoryFragment : Fragment() {
 
         // 서버에 요청을 보내고 응답을 처리하기 위한 버튼
         sendButton.setOnClickListener {
-            val topic = topicEditText.text.toString()
+            topic = topicEditText.text.toString()
             topicEditText.visibility = View.GONE
             sendButton.visibility = View.GONE
 
@@ -159,6 +170,12 @@ class MakeStoryFragment : Fragment() {
         })
     }
 
+    fun parseJson(jsonString: String): Map<String, Any> {
+        val gson = Gson()
+        val type = object : TypeToken<Map<String, Any>>() {}.type
+        return gson.fromJson(jsonString, type)
+    }
+
     private fun fetchStory(topic: String) {
         button1.visibility = View.GONE
         button2.visibility = View.GONE
@@ -178,28 +195,34 @@ class MakeStoryFragment : Fragment() {
             val obj = withContext(Dispatchers.IO) {
                 val py = Python.getInstance()
                 val pyObject = py.getModule("sbj")
-                pyObject.callAttr("get_response", topic)
+                val topic2 = topic
+                println("!!!!!!!!============================================================!!!!!!!!")
+
+                println(topic2)
+
+                val sentence = pyObject.callAttr("get_response", topic2).toString()
+                pyObject.callAttr("categorize_text", sentence)
             }
 
             // UI 업데이트는 메인 스레드에서 처리
             withContext(Dispatchers.Main) {
+
                 gameOutput = obj.toString()
+                val data: Map<String, Any> = parseJson(gameOutput)
 
-                val summaryIndex = gameOutput.indexOf("Story Summary")
-                if (summaryIndex != -1) {
-                    val summaryStartIndex = gameOutput.indexOf(':', summaryIndex)
-                    if (summaryStartIndex != -1) {
-                        val summaryEndIndex = gameOutput.indexOf('\n', summaryStartIndex)
-                        if (summaryEndIndex != -1) {
-                            storySummary = gameOutput.substring(summaryStartIndex + 1, summaryEndIndex).trim()
-                        } else {
-                            storySummary = gameOutput.substring(summaryStartIndex + 1).trim()
-                        }
-                    }
-                }
+                theme = data["Theme"] as? String ?: ""
+                worldview = data["World View"] as? String ?: ""
+                samplestory = data["Sample Story"] as? String ?: ""
 
+                println("!!!!!!!!============================================================!!!!!!!!")
+
+                print(gameOutput)
+                storySummary = samplestory
+
+                println("============================================================")
                 println(storySummary)
 
+                var text = ""
 
                 lifecycleScope.launch {
                     println("4")
@@ -207,12 +230,22 @@ class MakeStoryFragment : Fragment() {
                     val obj2 = withContext(Dispatchers.IO) {
                         val py = Python.getInstance()
                         val pyObject = py.getModule("translate")
-                        pyObject.callAttr("en2ko", obj.toString())
+                        if(samplestory.length>250){
+                            text = "이야기 샘플" + pyObject.callAttr("en2ko", samplestory).toString()
+                        }
+                        else{
+                            text += "테마" + pyObject.callAttr("en2ko", theme).toString()
+                            text += "당신의 세계    : " + pyObject.callAttr("en2ko", worldview).toString()
+                            text += "누군가의 이야기   : " + pyObject.callAttr("en2ko", samplestory).toString()
+
+                        }
+
+                        text
                     }
 
                     progressBar1.visibility = View.GONE
                     summaryText.visibility = View.VISIBLE
-                    summaryText.text = obj2.toString()
+                    summaryText.text = text
 
                     button1.visibility = View.VISIBLE
                     button2.visibility = View.VISIBLE
@@ -226,21 +259,46 @@ class MakeStoryFragment : Fragment() {
 
         lifecycleScope.launch {
 
+            var text2 = ""
+            text2 += "Topic is"+ topic + "Theme is " + theme + ",and World view is" + worldview
+
             if (!Python.isStarted()) {
                 Python.start(AndroidPlatform(requireContext()))
             }
 
+            val py = Python.getInstance()
+            val pyObject = py.getModule("script")
 
-                val obj = withContext(Dispatchers.IO) {
-                val py = Python.getInstance()
-                val pyObject = py.getModule("script")
-                pyObject.callAttr("main", storySummary)
+
+            val obj = withContext(Dispatchers.IO) {
+                val returnValue = pyObject.callAttr("main", text2)
+
+                val objString = returnValue.toString()
+                val objBytes = objString.toByteArray()
+
+
+                println(returnValue)
+                println(returnValue::class.java)
+                println("/////////////////////////////////////////////////////////")
+
+                println(objString)
+                println(objString::class.java)
+                println("/////////////////////////////////////////////////////////")
+
+                println(objBytes)
+                println(objBytes::class.java)
+
+                val imageBytes = Base64.decode(objString, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+
+                bitmap
             }
 
             // UI 업데이트는 메인 스레드에서 처리
             withContext(Dispatchers.Main) {
                 println(obj.toString())
-                imageView.load(obj.toString())
+                imageView.setImageBitmap(obj)
                 imageView.visibility = View.VISIBLE
                 progressBar2.visibility = View.GONE
 

@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation_graph"
     app:startDestination="@id/makeStoryFragment">
 
     <fragment
@@ -35,6 +33,14 @@
             android:id="@+id/action_storyFragment_to_choiceFragment"
             app:destination="@id/ChoiceFragment" />
 
+        <action
+            android:id="@+id/action_storyFragment_to_imgGenFragment"
+            app:destination="@id/imgGenFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+
     </fragment>
 
     <fragment
@@ -58,6 +64,22 @@
         <action
             android:id="@+id/action_choiceFragment_to_storyFragment"
             app:destination="@id/storyFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/imgGenFragment"
+        android:name="com.example.myapplication2.ImgGenFragment"
+        android:label="Image Generate"
+        tools:layout="@layout/img_gen_fragment" >
+
+        <action
+            android:id="@+id/action_imgGenFragment_to_storyFragment"
+            app:destination="@id/storyFragment"
+            app:enterAnim="@anim/silde_in_right"
+            app:exitAnim="@anim.slide_out_left"
+            app:popEnterAnim="@anim.slide_in_left"
+            app:popExitAnim="@anim.slide_out_right" />
 
     </fragment>
 

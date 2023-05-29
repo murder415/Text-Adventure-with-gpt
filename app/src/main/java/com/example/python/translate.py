@@ -24,8 +24,63 @@ def call_openai_api(model, msg):
         time.sleep(20)  # 20초 대기
         return call_openai_api(model, msg)
 
+
+
+def check_korean_ratio(text):
+    korean_pattern = re.compile("[ㄱ-ㅎㅏ-ㅣ가-힣]")
+    special_pattern = re.compile("[\W]")
+    numeric_pattern = re.compile("[\d]")
+
+    korean_count = 0
+    special_count = 0
+    numeric_count = 0
+    total_count = len(text)
+
+    for char in text:
+        if korean_pattern.match(char):
+            korean_count += 1
+        elif special_pattern.match(char):
+            special_count += 1
+        elif numeric_pattern.match(char):
+            numeric_count += 1
+
+    korean_ratio = korean_count / total_count
+    special_ratio = special_count / total_count
+    numeric_ratio = numeric_count / total_count
+    total_ratio = korean_ratio + special_ratio + numeric_ratio
+
+    return total_ratio
+
+
+def check_english_ratio(text):
+    english_pattern = re.compile("[A-Za-z]")
+    special_pattern = re.compile("[\W]")
+    numeric_pattern = re.compile("[\d]")
+
+    english_count = 0
+    special_count = 0
+    numeric_count = 0
+    total_count = len(text)
+
+    for char in text:
+        if english_pattern.match(char):
+            english_count += 1
+        elif special_pattern.match(char):
+            special_count += 1
+        elif numeric_pattern.match(char):
+            numeric_count += 1
+
+    english_ratio = english_count / total_count
+    special_ratio = special_count / total_count
+    numeric_ratio = numeric_count / total_count
+
+    total_ratio = english_ratio +  special_ratio +  numeric_ratio
+    print(total_ratio)
+
+    return total_ratio
+
 def en2ko(input):
-    input_pmt = f"{input}를 한국어로 번역해주세요"
+    input_pmt = f"translate {input} into korean, Show only translated results. No English in the result"
     model = "gpt-3.5-turbo"
 
 
@@ -43,6 +98,7 @@ def en2ko(input):
                    "role": "user",
                    "content": input_pmt
                }
+
             ]
             response = call_openai_api(model, messages)
 
@@ -51,10 +107,12 @@ def en2ko(input):
 
             korean_pattern = re.compile("[\uac00-\ud7a3]+")
             print(result)
+            threshold = 0.75
+
             
             # 결과가 한국어인지 확인
             if result:
-                if korean_pattern.search(result):
+                if check_korean_ratio(result) >= threshold:
                     return result
                 else:
                     print("Empty translation. Retrying...")
@@ -74,7 +132,7 @@ def en2ko(input):
             continue
 
 def ko2en(input):
-    input_pmt = f"{input}를 영어로 번역해주세요"
+    input_pmt = f"translate {input} into english, Show only translated results. No korean in the result"
     model = "gpt-3.5-turbo"
 
 
@@ -99,13 +157,15 @@ def ko2en(input):
             english_pattern = re.compile("[A-Za-z]+")
             print(result)
 
+            threshold = 0.75
+
             # 결과가 영어인지 확인
             if result:
-                if english_pattern.search(result):
-                    
+                if check_english_ratio(result) >= threshold:
                     return result
                 
                 else:
+                    print(check_english_ratio(result) )
                     print("Empty translation. Retrying...")
                     time.sleep(1)
                     continue
@@ -121,5 +181,6 @@ def ko2en(input):
             print(f"Error: {e}. Retrying...")
             time.sleep(1)
             continue
+
 
 

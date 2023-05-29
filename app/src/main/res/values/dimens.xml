@@ -2,5 +2,7 @@
 
 <resources>
     <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="dialog_width">330dp</dimen>
 
 </resources>
+

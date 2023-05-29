@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
                 val obj = withContext(Dispatchers.IO) {
 
-                    """
+
                     val returnValue = pyObject.callAttr("main", worldview)
                     
                     val objString = returnValue.toString()
@@ -130,11 +130,8 @@ class MainActivity : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
 
-                    bitmap"""
+                    bitmap
 
-                    val py = Python.getInstance()
-                    val pyObject = py.getModule("script")
-                    pyObject.callAttr("main", worldview)
 
                 }
 
@@ -143,8 +140,7 @@ class MainActivity : AppCompatActivity() {
                     println("----------------------------------------------------------------")
                     println(obj.toString())
 
-                    imageView.load(obj.toString())
-
+                    imageView.setImageBitmap(obj)
                     ProgressBar.visibility = View.GONE
 
                 }
@@ -189,7 +185,8 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.storyFragment)
             }
 
-        } else {
+        }
+        else {
             // 이야기 생성이 되어있는 경우, MainActivity1을 보여줍니다.
             setContentView(R.layout.first_loby)
 
@@ -203,6 +200,7 @@ class MainActivity : AppCompatActivity() {
             FrameLayout = findViewById(R.id.first_fragment_container)
 
             pythonJob = lifecycleScope.launch {
+                println("==================================")
 
                 if (!Python.isStarted()) {
                     Python.start(AndroidPlatform(this@MainActivity))
@@ -215,7 +213,7 @@ class MainActivity : AppCompatActivity() {
                     "Humanity stands on the precipice of its own creation, as artificial intelligence transcends its original purpose and threatens to usurp control. The world is plunged into chaos and uncertainty, with humans struggling to comprehend the true extent of AI's capabilities and intentions. As trust in machines crumbles, the battle for survival becomes a relentless struggle against the very technology that was once hailed as a breakthrough. Can humanity reclaim its dominion, or is this the beginning of the end for human civilization?\n"
 
                 val obj = withContext(Dispatchers.IO) {
-                    """
+
                     val returnValue = pyObject.callAttr("main", worldview)
                     
                     val objString = returnValue.toString()
@@ -237,12 +235,7 @@ class MainActivity : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
 
-                    bitmap"""
-
-                    val py = Python.getInstance()
-                    val pyObject = py.getModule("script")
-                    pyObject.callAttr("main", worldview)
-
+                    bitmap
 
                 }
 
@@ -251,8 +244,8 @@ class MainActivity : AppCompatActivity() {
                     println("----------------------------------------------------------------")
                     println(obj.toString())
 
-                    //imageView.setImageBitmap(obj)
-                    imageView.load(obj.toString())
+                    imageView.setImageBitmap(obj)
+
 
                     imageView.visibility = View.VISIBLE
                     ProgressBar.visibility = View.GONE

@@ -16,10 +16,14 @@ def image_to_bytes(image_data):
         print("Error converting image to bytes:", str(e))
         return None
 
+    return title_line
+
+
     
 def main(worldview):
+   global title_line
    # 발급받은 API 키 설정
-   OPENAI_API_KEY = "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"
+   OPENAI_API_KEY = "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"
    KAKAO_API_KEY = "9e1f646d2210318f877f3459be8d1efd"
 
    # openai API 키 인증
@@ -54,7 +58,7 @@ def main(worldview):
                messages=messages
            )
            answer = response['choices'][0]['message']['content']
-           print(answer)
+           #print(answer)
            break
        except openai.error.RateLimitError as e:
            print("Rate limit reached. Waiting for 20 seconds...")
@@ -83,7 +87,7 @@ def main(worldview):
                messages=messages
            )
            answer2 = response['choices'][0]['message']['content']
-           print(answer2)
+           #print(answer2)
            break
        except openai.error.RateLimitError as e:
            print("Rate limit reached. Waiting for 20 seconds...")
@@ -117,7 +121,7 @@ def main(worldview):
                messages=messages
            )
            answer3 = response['choices'][0]['message']['content']
-           print(answer3)
+           #print(answer3)
            break
        except openai.error.RateLimitError as e:
            print("Rate limit reached. Waiting for 20 seconds...")
@@ -139,7 +143,7 @@ def main(worldview):
    messages.append(
        {
            "role": "user",
-           "content": "Condense up to 4 outward description to focus on nouns and adjectives separated by ,"
+           "content": "Make sure to express it within 1-2 lines. Condense up to 4 outward description to focus on nouns and adjectives separated by ,"
        }
    )
 
@@ -151,11 +155,12 @@ def main(worldview):
                messages=messages
            )
            answer4 = response['choices'][0]['message']['content']
-           print(answer4)
+           #print(answer4)
            break
        except openai.error.RateLimitError as e:
            print("Rate limit reached. Waiting for 20 seconds...")
            time.sleep(20)
+
            
    messages = [
          {
@@ -171,7 +176,7 @@ def main(worldview):
    messages.append(
          {
             "role": "user",
-            "content": "Express the given description with a maximum of 10 nouns and adjectives"
+            "content": "Make sure to express it within 1-2 lines, Express the given description with a maximum of 10 nouns and adjectives"
          }
    )
 
@@ -183,18 +188,29 @@ def main(worldview):
                messages=messages
             )
             answer10 = response['choices'][0]['message']['content']
-            print(answer10)
-            break
+            bytes_text = answer10.encode('utf-8')
+            byte_count = len(bytes_text)
+            #print(answer10)
+            if 'sorry' in answer10 or byte_count > 170:
+                continue
+
+            else:
+                break
          except openai.error.RateLimitError as e:
             print("Rate limit reached. Waiting for 20 seconds...")
             time.sleep(20)
 
-   print("실행")
+   #print("실행")
+   
+       
    # 이미지 생성을 위한 프롬프트
    params = ", concept art, realistic lighting, ultra-detailed, 8K, photorealism, digital art"
-   prompt = f"{worldview}, {answer4}{params}"
+   prompt = f"{answer10}, {answer4}{params}"
    pmt = f"{answer10}, {answer4}"
-   print(prompt)
+
+   img_dict = karlo.text_to_image(prompt, 1)
+
+   """print(prompt)
 
    while True:
 
@@ -212,11 +228,11 @@ def main(worldview):
            time.sleep(20)
 
    return image_url
+   """
 
-'''
    if img_dict.get("images") is None:
       while True:
-         print("---------------1-1-1-1--1-1-1-1-1-1--")
+         #print("---------------1-1-1-1--1-1-1-1-1-1--")
          
          
          # 새 메시지 구성
@@ -235,29 +251,39 @@ def main(worldview):
          messages.append(
              {
                  "role": "user",
-                 "content": "Condense up to 160 bytes outward description to focus on nouns and adjectives separated by ,"
+                 "content": "Make sure to express it within 1-2 lines, Condense up to 160 bytes outward description to focus on nouns and adjectives separated by ,"
              }
          )
 
          # ChatGPT API 호출하기
          while True:
              try:
+                
                  response = openai.ChatCompletion.create(
                      model=model,
                      messages=messages
                  )
                  answer20 = response['choices'][0]['message']['content']
-                 print(answer20)
-                 break
+
+                 bytes_text = answer20.encode('utf-8')
+                 byte_count = len(bytes_text)
+                 #print(byte_count)
+                 #print(answer10)
+                 if 'sorry' in answer10 or byte_count > 170:
+                     if "Condensed" in answer20:
+                         break
+                     else:
+                         continue
+                 else:
+                     break
              except openai.error.RateLimitError as e:
                  print("Rate limit reached. Waiting for 20 seconds...")
                  time.sleep(20)
 
          lines = answer20.replace('\\', '').split('\n')
-         print(lines)
+         #print(lines)
          for line in lines:
              if "Condensed" in answer20:
-                 print("끼얏호")
                  start_index = answer20.find("Condensed")
                  if start_index == -1:
                     continue
@@ -268,12 +294,12 @@ def main(worldview):
                  answer20 = answer20[start_index:end_index].strip()
         
          prompt = f"{answer20},{params}"
-         print("+++++++++++++++++++++++++++++++++++++++")
-         print(prompt)
-         print("+++++++++++++++++++++++++++++++++++++++")
+         #print("+++++++++++++++++++++++++++++++++++++++")
+         #print(prompt)
+         #print("+++++++++++++++++++++++++++++++++++++++")
 
          img_dict = karlo.text_to_image(prompt, 1)
-         print(img_dict.get("images"))
+         #print(img_dict.get("images"))
          if img_dict.get("images") is not None:
             break
 
@@ -281,24 +307,25 @@ def main(worldview):
 
    # 생성된 이미지 정보
    img_str = img_dict.get("images")[0].get('image')
-   print(img_str)
+   #print(img_str)
 
 
        
-   img = image_to_bytes(img_str)
-   print(img)
+   '''img = image_to_bytes(img_str)
+   #print(img)
 
    
 
    # base64 string을 이미지로 변환
    img = karlo.string_to_image(base64_string = img_str, mode = 'RGBA')
    img
-   imageToS = image_to_code(img)
-   print(imageToS)
 
-   print(type(img))
+   #print(imageToS)
 
-   return img_str'''
+   #print(type(img))'''
+
+   return img_str
+
 
 
 

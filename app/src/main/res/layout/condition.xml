@@ -1,6 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="290dp"
     android:layout_height="wrap_content"
     android:background="@drawable/condition_dialog_bg"
     android:padding="16dp">
@@ -11,22 +11,22 @@
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:src="@drawable/ic_close"
         android:contentDescription="Close" />
 
     <TextView
+        android:layout_alignParentStart="true"
         android:id="@+id/conditionTitleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="상태창"
         android:fontFamily="@font/scdream9"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="280dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
+        android:layout_alignParentStart="true"
         android:id="@+id/conditionDetailsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,13 +35,12 @@
         android:textSize="16sp"
         android:layout_below="@id/conditionTitleTextView"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="120dp"
         android:layout_toStartOf="@id/closeButton" />
 
     <LinearLayout
         android:id="@+id/headerLayout"
-        android:layout_width="170dp"
-        android:layout_height="350dp"
+        android:layout_width="95dp"
+        android:layout_height="392dp"
         android:orientation="vertical"
         android:layout_below="@id/conditionDetailsTextView"
         android:layout_marginTop="16dp">
@@ -73,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/turnIconImageView"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:textStyle="bold"
                 android:fontFamily="@font/scdream7"
                 android:text="Turn: 1" />
@@ -108,7 +107,7 @@
             android:text="시간" />
 
         <RelativeLayout
-            android:layout_width="150dp"
+            android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginTop="10dp">
 
@@ -128,7 +127,8 @@
                 android:layout_toEndOf="@id/timeIconImageView"
                 android:textStyle="bold"
                 android:fontFamily="@font/scdream7"
-                android:layout_marginStart="16dp"
+                android:textSize="10dp"
+                android:layout_marginStart="4dp"
                 android:text="Afternoon" />
 
         </RelativeLayout>
@@ -142,7 +142,7 @@
             android:text="날짜" />
 
         <RelativeLayout
-            android:layout_width="150dp"
+            android:layout_width="130dp"
             android:layout_height="30dp"
             android:layout_marginTop="10dp">
 
@@ -162,7 +162,7 @@
                 android:layout_centerVertical="true"
                 android:textStyle="bold"
                 android:fontFamily="@font/scdream7"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:text="Day: 1" />
 
         </RelativeLayout>
@@ -176,9 +176,9 @@
             android:text="날씨" />
 
         <RelativeLayout
-            android:layout_width="150dp"
+            android:layout_width="130dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="0dp">
 
             <ImageView
                 android:id="@+id/weatherIconImageView"
@@ -190,17 +190,26 @@
 
             <TextView
                 android:id="@+id/weatherTextView"
-                android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/weatherIconImageView"
                 android:layout_centerVertical="true"
                 android:textStyle="bold"
+                android:textSize="10sp"
                 android:fontFamily="@font/scdream7"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:text="Cloudy" />
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/weatherTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:fontFamily="@font/scdream7"
+            android:textSize="10sp"
+            android:text="" />
         <!-- Add any additional views or information you want to display in the header -->
 
     </LinearLayout>
@@ -212,8 +221,7 @@
         android:orientation="vertical"
         android:layout_below="@id/conditionDetailsTextView"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp">
+        android:layout_marginTop="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -304,13 +312,11 @@
 
     <LinearLayout
         android:id="@+id/abilitiesLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/statsLayout"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="7dp"
-        android:layout_marginStart="199dp"
-        android:layout_marginEnd="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -322,7 +328,7 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -332,21 +338,23 @@
                 android:id="@+id/persuasionIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_centerVertical="true"
                 android:contentDescription="Persuasion Icon"
                 android:src="@drawable/persuasion_icon" />
 
             <TextView
                 android:id="@+id/persuasionTextView"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/persuasionIconImageView"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/scdream7"
                 android:text="Persuasion: 12" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
@@ -357,6 +365,7 @@
                 android:id="@+id/strengthIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_centerVertical="true"
                 android:contentDescription="Strength Icon"
                 android:src="@drawable/strength_icon" />
 
@@ -366,11 +375,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/scdream7"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/strengthIconImageView"
                 android:text="Strength: 8" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
@@ -381,6 +392,7 @@
                 android:id="@+id/intelligenceIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_centerVertical="true"
                 android:contentDescription="Intelligence Icon"
                 android:src="@drawable/intelligence_icon" />
 
@@ -390,11 +402,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/scdream7"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/intelligenceIconImageView"
                 android:text="Intelligence: 14" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
@@ -405,6 +419,7 @@
                 android:id="@+id/dexterityIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_centerVertical="true"
                 android:contentDescription="Dexterity Icon"
                 android:src="@drawable/dexterity_icon" />
 
@@ -414,11 +429,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/scdream7"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/dexterityIconImageView"
                 android:text="Dexterity: 10" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
@@ -429,6 +446,7 @@
                 android:id="@+id/luckIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_centerVertical="true"
                 android:contentDescription="Luck Icon"
                 android:src="@drawable/luck_icon" />
 
@@ -436,11 +454,13 @@
                 android:id="@+id/luckTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/luckIconImageView"
+                android:layout_marginStart="10dp"
                 android:fontFamily="@font/scdream7"
                 android:text="Luck: 16" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
