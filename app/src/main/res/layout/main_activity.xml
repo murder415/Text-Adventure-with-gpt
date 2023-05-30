@@ -60,14 +60,14 @@
             android:id="@+id/newImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="새로하기"
+            android:text="새로운 세상"
             android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="시작하기"
+            android:text="기존의 세상"
             android:layout_marginBottom="32dp" />
 
     </LinearLayout>

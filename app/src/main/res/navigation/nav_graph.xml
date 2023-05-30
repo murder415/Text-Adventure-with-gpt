@@ -11,76 +11,17 @@
 
         <action
             android:id="@+id/action_makeStoryFragment_to_storyFragment"
-            app:destination="@id/storyFragment" />
+            app:destination="@id/storyActivity" />
 
     </fragment>
 
-    <fragment
-        android:id="@+id/storyFragment"
-        android:name="com.example.myapplication2.StoryFragment"
-        android:label="Story"
-        tools:layout="@layout/story_fragment" >
+    <activity
+        android:id="@+id/storyActivity"
+        android:name="com.example.myapplication2.StoryActivity"
+        android:label="Story Activity" />
 
-        <action
-            android:id="@+id/action_storyFragment_to_chatBotFragment"
-            app:destination="@id/chatBotFragment" />
 
-        <action
-            android:id="@+id/action_storyFragment_to_genimgFragment"
-            app:destination="@id/genimgfragment" />
 
-        <action
-            android:id="@+id/action_storyFragment_to_choiceFragment"
-            app:destination="@id/ChoiceFragment" />
 
-        <action
-            android:id="@+id/action_storyFragment_to_imgGenFragment"
-            app:destination="@id/imgGenFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/chatBotFragment"
-        android:name="com.example.myapplication2.ChatBotFragment"
-        android:label="Chat Bot"
-        tools:layout="@layout/fragment_chat" />
-
-    <fragment
-        android:id="@+id/genimgfragment"
-        android:name="com.example.myapplication2.GenImgFragment"
-        android:label="Generate Image"
-        tools:layout="@layout/fragment_genimg" />
-
-    <fragment
-        android:id="@+id/ChoiceFragment"
-        android:name="com.example.myapplication2.ChoiceFragment"
-        android:label="Choice"
-        tools:layout="@layout/fragment_choice" >
-
-        <action
-            android:id="@+id/action_choiceFragment_to_storyFragment"
-            app:destination="@id/storyFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/imgGenFragment"
-        android:name="com.example.myapplication2.ImgGenFragment"
-        android:label="Image Generate"
-        tools:layout="@layout/img_gen_fragment" >
-
-        <action
-            android:id="@+id/action_imgGenFragment_to_storyFragment"
-            app:destination="@id/storyFragment"
-            app:enterAnim="@anim/silde_in_right"
-            app:exitAnim="@anim.slide_out_left"
-            app:popEnterAnim="@anim.slide_in_left"
-            app:popExitAnim="@anim.slide_out_right" />
-
-    </fragment>
 
 </navigation>

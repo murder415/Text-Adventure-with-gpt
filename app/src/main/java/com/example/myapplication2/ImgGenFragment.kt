@@ -6,6 +6,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -30,7 +31,7 @@ class ImgGenFragment : Fragment() {
 
     private lateinit var imageView: ImageView
     private lateinit var progressBar: ProgressBar
-    private lateinit var refreshButton: ImageButton
+    private lateinit var refreshButton: Button
 
     private lateinit var viewModel: ImgGenViewModel
 
@@ -48,7 +49,6 @@ class ImgGenFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        viewPager = view.findViewById(R.id.viewPager)
 
         imageView = view.findViewById(R.id.imageView)
         progressBar = view.findViewById(R.id.progressBar)
@@ -56,22 +56,6 @@ class ImgGenFragment : Fragment() {
 
         // 이미지 생성 로직을 실행하는 코드
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                // 현재 페이지의 위치(position)을 확인하여 알맞은 동작을 수행합니다.
-                when (position) {
-                    1 -> {
-                        val StoryFragment = StoryFragment()
-                        // Fragment 전환 코드를 작성하세요.
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.viewPager, StoryFragment)
-                            .commit()
-                        // 포지션 1에 도착하였을 때의 동작을 정의합니다.
-                        // 이곳에서 필요한 로직을 추가하세요.
-                    }
-                }
-            }
-        })
 
         refreshButton.setOnClickListener {
             if (description.isEmpty()) {
@@ -95,6 +79,8 @@ class ImgGenFragment : Fragment() {
     }
 
     fun updateDescription(newDescription: String) {
+        viewModel = ViewModelProvider(this).get(ImgGenViewModel::class.java)
+
         description = newDescription
         // Chaquopy를 백그라운드에서 실행하는 로직을 호출합니다.
         viewModel.generateImage(description, requireContext())

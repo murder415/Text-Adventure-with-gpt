@@ -231,7 +231,7 @@ class MakeStoryFragment : Fragment() {
                         val py = Python.getInstance()
                         val pyObject = py.getModule("translate")
                         if(samplestory.length>250){
-                            text = "이야기 샘플" + pyObject.callAttr("en2ko", samplestory).toString()
+                            text = "누군가의 이야기   : " + pyObject.callAttr("en2ko", samplestory).toString()
                         }
                         else{
                             text += "테마" + pyObject.callAttr("en2ko", theme).toString()

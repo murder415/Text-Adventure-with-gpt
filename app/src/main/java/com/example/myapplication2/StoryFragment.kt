@@ -32,14 +32,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.lifecycle.lifecycleScope
 import android.util.Log
-import androidx.navigation.fragment.findNavController
-
-import android.view.ViewConfiguration
-import android.content.Context
 
 import androidx.viewpager2.widget.ViewPager2
 import me.relex.circleindicator.CircleIndicator3
-import androidx.fragment.app.FragmentManager
+
 
 
 
@@ -48,30 +44,7 @@ import androidx.fragment.app.FragmentManager
 class StoryFragment : Fragment() {
 
     private lateinit var imgGenFragment: ImgGenFragment
-
-
-    private lateinit var viewPager: ViewPager2
-    private lateinit var storyAdapter: StoryAdapter
-    private lateinit var indicator: CircleIndicator3
-
-
-    private lateinit var swipeCallback: SwipeCallback
-    private lateinit var swipeView: View
-
-
-    private lateinit var turnNumberTextView: TextView
-    private lateinit var timePeriodTextView: TextView
-    private lateinit var dayNumberTextView: TextView
-    private lateinit var weatherTextView: TextView
-    private lateinit var luckTextView : TextView
-    private lateinit var healthTextView: TextView
-    private lateinit var levelTextView: TextView
-    private lateinit var xpProgressBar: ProgressBar
-    private lateinit var difficultyTextView : TextView
-    private lateinit var persuasionTextView : TextView
-    private lateinit var strengthTextView : TextView
-    private lateinit var intelligenceTextView : TextView
-    private lateinit var dexterityTextView : TextView
+    private lateinit var choiceFragment: ChoiceFragment
 
 
     private lateinit var descriptionTextView: TextView
@@ -114,56 +87,8 @@ class StoryFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.story_fragment, container, false)
 
-        viewPager = view.findViewById(R.id.viewPager)
-        storyAdapter = StoryAdapter(childFragmentManager, lifecycle)
-        viewPager.adapter = storyAdapter
 
-        indicator = view.findViewById(R.id.indicator)
-        indicator.setViewPager(viewPager)
 
-        // ViewPager2의 Swipe 이벤트 리스너 설정
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                // 현재 페이지의 위치(position)을 확인하여 알맞은 Fragment로 전환합니다.
-                when (position) {
-                    0 -> {
-                        // 좌로 Swipe 시 img_gen_fragment.xml로 이동합니다.
-                        // img_gen_fragment.xml로 이동하는 코드를 작성하세요.
-                        val imgGenFragment = ImgGenFragment()
-                        // Fragment 전환 코드를 작성하세요.
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.viewPager, imgGenFragment)
-                            .commit()
-                    }
-                    2 -> {
-                        // 우로 Swipe 시 choice_fragment.xml로 이동합니다.
-                        // choice_fragment.xml로 이동하는 코드를 작성하세요.
-                        val choiceFragment = ChoiceFragment()
-                        // Fragment 전환 코드를 작성하세요.
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.viewPager, choiceFragment)
-                            .commit()
-                    }
-                }
-            }
-        })
-
-//        val swipeCallback = object : SwipeCallback(requireActivity()) {
-//            override fun onSwipeLeft() {
-//                // 화면 전환 액션 실행
-//                findNavController().navigate(R.id.action_storyFragment_to_genimgFragment)
-//                showImgFragment()
-//            }
-//
-//            override fun onSwipeRight() {
-//                // 화면 전환 액션 실행
-//                findNavController().navigate(R.id.action_storyFragment_to_choiceFragment)
-//            }
-//        }
-//
-//        // 스와이프 제스처를 감지할 뷰에 콜백 등록
-//        val swipeView = view.findViewById<View>(R.id.swipeGestureView)
-//        swipeView.setOnTouchListener(swipeCallback)
 
 
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
@@ -183,7 +108,7 @@ class StoryFragment : Fragment() {
 
         // Talk 아이콘 클릭 시 ChatbotFragment로 이동
         talkButton.setOnClickListener {
-            findNavController().navigate(R.id.action_storyFragment_to_chatBotFragment)
+
         }
 
         conditionButton.setOnClickListener {
@@ -193,22 +118,7 @@ class StoryFragment : Fragment() {
         return view
     }
 
-    private fun showImgFragment(){
-        val enterAnimation = R.anim.slide_in_right
-        val exitAnimation = R.anim.slide_out_left
 
-        val transaction = requireActivity().supportFragmentManager.beginTransaction()
-
-        transaction.setCustomAnimations(enterAnimation, exitAnimation)
-
-        val containerId = R.id.fragment_container
-
-        val imgFragment = ImgGenFragment()
-
-        transaction.replace(containerId, imgFragment)
-
-        transaction.commit()
-    }
     private fun showInventoryDialog() {
         println("inventory Loop inner")
         val dialog = Dialog(requireContext())
@@ -392,7 +302,7 @@ class StoryFragment : Fragment() {
             val obj = withContext(Dispatchers.IO) {
                 val py = Python.getInstance()
                 val pyObject = py.getModule("textAdventure")
-                messages = pyObject.callAttr("main", MakeStoryFragment.gameOutput)
+                messages = pyObject.callAttr("main", MakeStoryFragment.gameOutput).toString()
                 val attributes = pyObject.callAttr("return_attributes").toString()
                 val answer = pyObject.callAttr("return_answer").toString()
                 Pair(attributes, answer)
@@ -452,11 +362,6 @@ class StoryFragment : Fragment() {
 
         val obj3 = pyObject.callAttr("en2ko", weather)
 
-        val translatedCommands = commands.mapValues { (_, value) ->
-            pyObject.callAttr("en2ko", value).toString()
-        }.toMutableMap()
-
-        commands = translatedCommands
 
 
 
@@ -488,8 +393,11 @@ class StoryFragment : Fragment() {
 
         // 예시: 데이터 출력
 
-
+        imgGenFragment = ImgGenFragment()
         imgGenFragment.updateDescription(description)
+
+        choiceFragment = ChoiceFragment()
+        choiceFragment.updatePossibleCommands(commands)
 
 
 
@@ -644,14 +552,6 @@ class StoryFragment : Fragment() {
     }
 
 
-    fun receiveInventoryArray(inventory: Array<String>) {
-        // 전달된 배열을 사용하여 작업을 수행합니다.
-        // 예시로 배열 요소를 출력하는 코드를 작성하였습니다.
-        inventory.forEach { item ->
-            println(item)
-        }
-    }
-
 
 
 
@@ -662,38 +562,3 @@ class StoryFragment : Fragment() {
     }
 }
 
-
-abstract class SwipeCallback(private val context: Context) : View.OnTouchListener {
-    private var startX = 0f
-    private var startY = 0f
-    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
-
-    override fun onTouch(view: View, event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                startX = event.x
-                startY = event.y
-            }
-            MotionEvent.ACTION_UP -> {
-                val endX = event.x
-                val endY = event.y
-                val diffX = endX - startX
-                val diffY = endY - startY
-
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > touchSlop) {
-                    if (diffX > 0) {
-                        onSwipeRight()
-                    } else {
-                        onSwipeLeft()
-                    }
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    abstract fun onSwipeLeft()
-
-    abstract fun onSwipeRight()
-}
