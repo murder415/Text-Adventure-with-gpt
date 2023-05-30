@@ -3,7 +3,7 @@ import time
 import re
 
 # OpenAI API 키 설정
-openai.api_key = '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'
+openai.api_key = ''
 
 def call_openai_api(model, msg):
 
