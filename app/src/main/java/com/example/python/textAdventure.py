@@ -564,7 +564,7 @@ def main(topic):
    global messages
 
    # 발급받은 API 키 설정
-   OPENAI_API_KEY = "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"
+   OPENAI_API_KEY = ""
 
    # openai API 키 인증
    openai.api_key = OPENAI_API_KEY
