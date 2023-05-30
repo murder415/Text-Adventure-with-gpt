@@ -23,8 +23,8 @@ def image_to_bytes(image_data):
 def main(worldview):
    global title_line
    # 발급받은 API 키 설정
-   OPENAI_API_KEY = "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"
-   KAKAO_API_KEY = "9e1f646d2210318f877f3459be8d1efd"
+   OPENAI_API_KEY = ""
+   KAKAO_API_KEY = ""
 
    # openai API 키 인증
    openai.api_key = OPENAI_API_KEY
