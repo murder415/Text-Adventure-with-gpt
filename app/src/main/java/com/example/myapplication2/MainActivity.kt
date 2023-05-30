@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
-        const val apiKey = "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"
+        const val apiKey = ""
     }
 
 
