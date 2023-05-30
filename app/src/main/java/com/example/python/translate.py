@@ -2,7 +2,7 @@ import openai
 import time
 import re
 # OpenAI API 키 설정
-openai.api_key = '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'
+openai.api_key = ''
 
 def call_openai_api(model, msg):
    model = "gpt-3.5-turbo"
